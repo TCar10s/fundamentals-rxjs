@@ -1,31 +1,36 @@
-// If an object is extracted directly from rxjs it means that it is something to create Observables.
-import { Observable, Observer } from 'rxjs';
-
-//const obs$ = Observable.create(); INFO: Deprecate
+import { Observable, Observer, Subject } from 'rxjs';
 
 const observer: Observer<any> = {
-    next: value => console.log('[next]: ', value),
-    error: error => console.error('[error]: ', error),
-    complete: () => console.info('[completed]')
+  next: (value) => console.log('[next]: ', value),
+  error: (error) => console.error('[error]: ', error),
+  complete: () => console.info('[completed]'),
 };
 
-const obs$ = new Observable<string>(subs => {
-    subs.next('Hello');
-    subs.next('World');
+const interval$ = new Observable<number>((subscriber) => {
+  // Emit random number
+  const intervalId = setInterval(() => {
+    subscriber.next(Math.random());
+  }, 5000);
 
-    subs.next('Hello');
-    subs.next('World');
-
-    // Force error
-    const a = undefined;
-    a.name = 'Test';
-
-    subs.complete();
-
-    subs.next('Hello');
-    subs.next('World');
+  // Return que se ejecutara cuando se realice el unsubscribe
+  return () => {
+    clearInterval(intervalId);
+    console.log('Interval destroyed for unsubscribe');
+  }
 });
 
-//obs$.subscribe(resp => console.log(resp));
+/*
+* 1- Casteo múltiple
+* 2- También es un observer
+* 3- Next, error, complete
+*/
 
-obs$.subscribe(observer);
+const subject$ = new Subject();
+interval$.subscribe(subject$);
+
+
+//const sub1 = interval$.subscribe( rnd => console.log('Sub 1: ', rnd) );
+//const sub2 = interval$.subscribe( rnd => console.log('Sub 2: ', rnd) );
+
+const sub1 = subject$.subscribe( rnd => console.log('Sub 1: ', rnd) );
+const sub2 = subject$.subscribe( rnd => console.log('Sub 2: ', rnd) );
