@@ -10,7 +10,7 @@ const interval$ = new Observable<number>((subscriber) => {
   // Emit random number
   const intervalId = setInterval(() => {
     subscriber.next(Math.random());
-  }, 5000);
+  }, 1000);
 
   // Return que se ejecutara cuando se realice el unsubscribe
   return () => {
@@ -26,11 +26,20 @@ const interval$ = new Observable<number>((subscriber) => {
 */
 
 const subject$ = new Subject();
-interval$.subscribe(subject$);
+const subscription = interval$.subscribe(subject$);
 
 
 //const sub1 = interval$.subscribe( rnd => console.log('Sub 1: ', rnd) );
 //const sub2 = interval$.subscribe( rnd => console.log('Sub 2: ', rnd) );
 
-const sub1 = subject$.subscribe( rnd => console.log('Sub 1: ', rnd) );
-const sub2 = subject$.subscribe( rnd => console.log('Sub 2: ', rnd) );
+const sub1 = subject$.subscribe( observer );
+const sub2 = subject$.subscribe( observer );
+
+setTimeout(() => {
+  
+  subject$.next(10);
+  subject$.complete();
+
+  subscription.unsubscribe();
+
+}, 3500);
