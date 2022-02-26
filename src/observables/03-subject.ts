@@ -1,3 +1,4 @@
+ // Si algo proviene de la librería rxjs, significa que se usa para  crear observables.
 import { Observable, Observer, Subject } from 'rxjs';
 
 const observer: Observer<any> = {
@@ -20,12 +21,13 @@ const interval$ = new Observable<number>((subscriber) => {
 });
 
 /*
+  Caracteristicas de un subject:
 * 1- Casteo múltiple
 * 2- También es un observer
 * 3- Next, error, complete
 */
 
-const subject$ = new Subject();
+const subject$ = new Subject(); // El subjet es un tipo especial de observable
 const subscription = interval$.subscribe(subject$);
 
 
